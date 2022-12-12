@@ -12,10 +12,10 @@ use crossterm::style::{Print, SetForegroundColor, SetBackgroundColor, ResetColor
 use super::t_block::Tblock;
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Tmap {
     pub map: Vec<Vec<usize>>,
-    pub blocks: Vec<Tblock>
+    pub block: Tblock
 }
 
 
@@ -54,10 +54,11 @@ impl Tmap {
         let mut map: Vec<Vec<usize>> = vec![];
         let mut arr: Vec<usize>;
         
-        let mut blocks: Vec<Tblock> = vec![];
         
-        let mut rng = thread_rng();
-        blocks.push(Tblock::new(rng.gen_range(1..8), None));
+        // let mut rng = thread_rng();
+        // let block: Tblock = Tblock::new(rng.gen_range(1..8), None, 0);
+        let block: Tblock = Tblock::new(2, None, 3);
+
         for _ in 0..20{
             arr = vec![];
             for _ in 0..10{
@@ -68,38 +69,21 @@ impl Tmap {
 
         Self{
             map: map,
-            blocks: blocks
+            block: block
         }
     }
 
-    pub fn push_block(mut self){
-        let mut rng = thread_rng();
-        self.blocks.push(Tblock::new(rng.gen_range(1..8), None));
-        // Self {
-        //     blocks: self.blocks,
-        //     map: self.map
-        // }
-    }
-
-    pub fn get_block(&self, index: usize) -> &Tblock{
-        &self.blocks[index]
+    pub fn get_block(&mut self) -> &mut Tblock{
+        &mut self.block
     }
 
     pub fn encoding(&self){
         let mut map = self.map.clone();
-        let blocks = self.blocks.clone(); // 여기에는 clone메서드가 없는데 어떻게 해야하나요?
-        for block in &blocks{ // 요게 =을적으면 blocks변수에 값을 복사하라는뜻인데
-            // vector는 복사가 안되거든요
-            // 복제를하려면 .clone() 사용해야해요
-            // 여게
-            // 저 vector가 TBlock을 가지고있는데
-            // Tblock이 clone이 불가능해서 나타나는 문제에요
+        let block = self.block.clone(); // 여기에는 clone메서드가 없는데 어떻게 해야하나요?
+
+        for shape in &block.shape{
+            map[shape[1]][shape[0]] = block.id;
             
-            // 그러면 어떻게 고처야 할까요?
-            for shape in &block.shape{
-                map[shape[1]][shape[0]] = block.id;
-                
-            }
         }
         for _ in 0..12{
             let _ = execute!(
@@ -144,17 +128,6 @@ impl Tmap {
                 }else{
                     print!("ㅤ")
                 }
-                // let b = match j{
-                //     0 => "⬛",
-                //     1 => "⬜",
-                //     2 => "🟪",
-                //     3 => "🟨",
-                //     4 => "🟦",
-                //     5 => "🟧",
-                //     6 => "🟥",
-                //     _ => "🟩"
-                // };
-                // print!("{}", b)
             }
             let _ = execute!(
                 stdout(),

@@ -6,7 +6,8 @@ use super::t_move::Move;
 pub struct Tblock {
     pub shape: Vec<Vec<usize>>,
     pub pos: Pos,
-    pub id: usize
+    pub id: usize,
+    pub deg: usize
 }
 // struct도 public 인가요?
 // 넹
@@ -15,14 +16,15 @@ pub struct Tblock {
 // Clone이라는게 있군요
 // 요데 저기도 Pos가 clone이없어서 posㄷ clone적어줘야해요
 impl Tblock {
-    pub fn new(id: usize, pos: Option<Pos>) -> Self{
+    pub fn new(id: usize, pos: Option<Pos>, deg:usize) -> Self{
         let pos = pos.unwrap_or_else(||Pos{x: 3, y: 0});
-        let shape = make_shape(id, pos);
+        let shape = make_shape(id, pos, deg);
 
         Self{
             shape: shape,
             pos: pos,
-            id: id
+            id: id,
+            deg: deg
         }
 
         /*
@@ -39,12 +41,26 @@ impl Tblock {
         // 저건 &값을 사용못하는함수로 설정되어있어서 그런거에요
     }
 
-    pub fn t_move(mut self, direction: Move){
+    pub fn t_move(&mut self, direction: Move){
         if direction == Move::Left{
             self.pos.x -= 1;
         }else{
             self.pos.x += 1;
         }
-        self.shape = make_shape(self.id, self.pos)
+        self.shape = make_shape(self.id, self.pos, self.deg)
+    }
+
+    // 여기가 문제인데
+    // 여기가 mut self를 받잖아요?
+    // 근데 이렇게 선언하면 이 함수를 타고 값이 사라져요 구조체가 사라져요
+    // 그래서 & 을 써주면 값이 사라지지 않고 포인터만 주게 할 수 있어요
+    //아하
+    pub fn t_spin(&mut self){
+        if self.deg + 1 >= 4{
+            self.deg = 0;
+        }else{
+            self.deg += 1
+        }
+        self.shape = make_shape(self.id, self.pos, self.deg)
     }
 }
