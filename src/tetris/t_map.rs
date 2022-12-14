@@ -10,7 +10,8 @@ use std::io::{stdout};
 use crossterm::execute;
 use crossterm::style::{Print, SetForegroundColor, SetBackgroundColor, ResetColor, Color};
 use super::t_block::Tblock;
-
+use super::t_pos::Pos;
+use super::t_built_in::built_in::make_shape;
 
 #[derive(Debug, Clone)]
 pub struct Tmap {
@@ -55,35 +56,45 @@ impl Tmap {
         let mut arr: Vec<usize>;
         
         
-        // let mut rng = thread_rng();
-        // let block: Tblock = Tblock::new(rng.gen_range(1..8), None, 0);
-        let block: Tblock = Tblock::new(2, None, 3);
+        let mut rng = thread_rng();
+        let block: Tblock = Tblock::new(rng.gen_range(1..8), None, 0);
+        // let block: Tblock = Tblock::new(1, None, 0);
 
-        for _ in 0..20{
-            arr = vec![];
-            for _ in 0..10{
-                arr.push(0);
-            }
-            map.push(arr);
-        }
-
+        map = vec![vec![0; 10]; 20];
         Self{
             map: map,
             block: block
         }
     }
 
-    pub fn get_block(&mut self) -> &mut Tblock{
-        &mut self.block
+    pub fn set_block(&mut self){ 
+        let block = self.block.clone();
+        for shape in block.shape{
+            self.map[shape[1]][shape[0]] = block.id;
+        }
     }
 
-    pub fn encoding(&self){
+    pub fn block_down(&mut self){ 
+        self.block.pos.y += 1;
+        match make_shape(self.block.id, self.block.pos, self.block.deg) {
+            Ok(ok) => { self.block.shape = ok }
+            Err(_) => { 
+                self.block.pos.y -= 1;
+                self.set_block();
+                let mut rng = thread_rng();
+                self.block = Tblock::new(rng.gen_range(1..8), None, 0);
+            }
+        };
+    }
+
+
+
+    pub fn encoding(&self) {
         let mut map = self.map.clone();
-        let block = self.block.clone(); // 여기에는 clone메서드가 없는데 어떻게 해야하나요?
+        let block = self.block.clone();
 
         for shape in &block.shape{
             map[shape[1]][shape[0]] = block.id;
-            
         }
         for _ in 0..12{
             let _ = execute!(

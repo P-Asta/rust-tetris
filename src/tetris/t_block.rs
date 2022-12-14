@@ -1,4 +1,6 @@
-use super::t_pos::Pos;
+use std::slice::SliceIndex;
+
+use super::{t_pos::Pos, t_map::Tmap};
 use crate::tetris::t_built_in::built_in::make_shape;
 use super::t_move::Move;
 
@@ -16,9 +18,9 @@ pub struct Tblock {
 // Clone이라는게 있군요
 // 요데 저기도 Pos가 clone이없어서 posㄷ clone적어줘야해요
 impl Tblock {
-    pub fn new(id: usize, pos: Option<Pos>, deg:usize) -> Self{
+    pub fn new(id: usize, pos: Option<Pos>, deg: usize) -> Self{
         let pos = pos.unwrap_or_else(||Pos{x: 3, y: 0});
-        let shape = make_shape(id, pos, deg);
+        let shape = make_shape(id, pos, deg).unwrap();
 
         Self{
             shape: shape,
@@ -42,13 +44,25 @@ impl Tblock {
     }
 
     pub fn t_move(&mut self, direction: Move){
-        if direction == Move::Left{
-            self.pos.x -= 1;
-        }else{
-            self.pos.x += 1;
+        match direction{
+            Move::Left => {
+                self.pos.x -= 1;
+                match make_shape(self.id, self.pos, self.deg) {
+                    Ok(ok) => { self.shape = ok }
+                    Err(_) => { self.pos.x += 1 }
+                }
+            }
+            Move::Right => {
+                self.pos.x += 1;
+                match make_shape(self.id, self.pos, self.deg) {
+                    Ok(ok) => { self.shape = ok }
+                    Err(_) => { self.pos.x -= 1 }
+                }
+            }
         }
-        self.shape = make_shape(self.id, self.pos, self.deg)
+        
     }
+
 
     // 여기가 문제인데
     // 여기가 mut self를 받잖아요?
@@ -61,6 +75,15 @@ impl Tblock {
         }else{
             self.deg += 1
         }
-        self.shape = make_shape(self.id, self.pos, self.deg)
+        match make_shape(self.id, self.pos, self.deg) {
+            Ok(ok) => { self.shape = ok }
+            Err(_) => {
+                if self.deg == 0{
+                    self.deg = 3
+                }else{
+                    self.deg -= 1
+                }
+            }
+        }
     }
 }

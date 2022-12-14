@@ -1,7 +1,7 @@
 #[derive(Debug, Clone, Copy)]
 pub struct Pos {
-    pub x: usize,
-    pub y: usize
+    pub x: isize,
+    pub y: isize
 }
 /* 
 clone은 데이터 안에 들어가서 하나하나 복사하는건데
