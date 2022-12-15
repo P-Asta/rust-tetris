@@ -1,6 +1,4 @@
-use std::slice::SliceIndex;
-
-use super::{t_pos::Pos, t_map::Tmap};
+use super::{t_pos::Pos};
 use crate::tetris::t_built_in::built_in::make_shape;
 use super::t_move::Move;
 
@@ -60,7 +58,16 @@ impl Tblock {
                 }
             }
         }
-        
+    }
+
+    pub fn is_none(&self) -> bool{
+        match make_shape(0, self.pos, 0){
+            Ok(ok) => {self.shape.clone() == ok}
+            Err(_) => {
+                println!("err");
+                false
+            }
+        }
     }
 
 

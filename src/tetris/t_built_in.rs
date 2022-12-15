@@ -3,6 +3,7 @@
 pub mod built_in{
     // 여기는 crate::tetris::t_built_in::built_in
     use super::super::t_pos::Pos;
+    #[allow(unused_assignments)]
     pub fn make_shape(id: usize, pos: Pos, deg: usize) -> Result<Vec<Vec<usize>>, ()>{
         let mut block: Vec<Vec<Vec<usize>>> = match id {
             1 => {
@@ -101,7 +102,7 @@ pub mod built_in{
                     ]
                 ]
             }
-            _ => {
+            7 => {
                 vec![
                     vec![
                         vec![0 , 2], vec![1 , 1], vec![1 , 2], vec![2 , 1]
@@ -116,6 +117,9 @@ pub mod built_in{
                         vec![1 , 0], vec![1 , 1], vec![2 , 1], vec![2 , 2]
                     ]
                 ]
+            }
+            _ => {
+                vec![vec![vec![0; 2]; 4]; 4]
             }
         };
         let block_clone = block.clone();

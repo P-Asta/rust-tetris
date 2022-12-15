@@ -7,16 +7,18 @@
 
 use rand::{Rng, thread_rng};
 use std::io::{stdout};
+
 use crossterm::execute;
 use crossterm::style::{Print, SetForegroundColor, SetBackgroundColor, ResetColor, Color};
 use super::t_block::Tblock;
-use super::t_pos::Pos;
+use super::t_move::Move;
 use super::t_built_in::built_in::make_shape;
 
 #[derive(Debug, Clone)]
 pub struct Tmap {
     pub map: Vec<Vec<usize>>,
-    pub block: Tblock
+    pub block: Tblock,
+    pub point: usize
 }
 
 
@@ -51,9 +53,9 @@ pub struct Tmap {
 */
 
 impl Tmap {
+    #[allow(unused_assignments)]
     pub fn new() -> Self {
         let mut map: Vec<Vec<usize>> = vec![];
-        let mut arr: Vec<usize>;
         
         
         let mut rng = thread_rng();
@@ -63,7 +65,8 @@ impl Tmap {
         map = vec![vec![0; 10]; 20];
         Self{
             map: map,
-            block: block
+            block: block,
+            point: 0
         }
     }
 
@@ -72,22 +75,88 @@ impl Tmap {
         for shape in block.shape{
             self.map[shape[1]][shape[0]] = block.id;
         }
+        let mut i: usize = 0;
+        for map in &self.map.clone(){
+            let mut ok: bool = true;
+            for i in map{
+                if *i == 0{
+                    ok = false;
+                    break;
+                }
+            }
+            if ok{
+                self.map.remove(i);
+                self.map.reverse();
+                self.map.push(vec![0;10]);
+                self.map.reverse();
+                i -= 1;
+                self.point += 100
+            }
+            i += 1;
+        }
     }
 
-    pub fn block_down(&mut self){ 
+    pub fn down_block(&mut self){ 
         self.block.pos.y += 1;
         match make_shape(self.block.id, self.block.pos, self.block.deg) {
-            Ok(ok) => { self.block.shape = ok }
+            Ok(ok) => { 
+                let test_block = ok;
+                let ok2 = self.check(&test_block);
+                if ok2{
+                    self.block.shape = test_block.clone();
+                }else{
+                    self.block.pos.y -= 1;
+                    self.set_block();
+                    self.spawn_block();
+                }
+            }
             Err(_) => { 
                 self.block.pos.y -= 1;
                 self.set_block();
-                let mut rng = thread_rng();
-                self.block = Tblock::new(rng.gen_range(1..8), None, 0);
+                self.spawn_block();
             }
         };
     }
 
+    pub fn move_block(&mut self, direction: Move){
+        let mut block_clone = self.block.clone();
+        block_clone.t_move(direction);
+        let ok = self.check(&block_clone.shape);
+        if ok{
+            self.block = block_clone.clone();
+        }   
+    }
 
+    pub fn spin_block(&mut self){
+        let mut block_clone = self.block.clone();
+        block_clone.t_spin();
+        if self.check(&block_clone.shape){
+            self.block = block_clone.clone();
+        }
+    }
+
+    fn spawn_block(&mut self){
+        let mut rng = thread_rng();
+        let block = Tblock::new(rng.gen_range(1..8), None, 0);
+        for part in &block.shape{
+            if self.map[part[1]][part[0]] != 0{
+                self.block = Tblock::new(0, None, 0);
+                return;
+            }
+        }
+        self.block = block.clone();
+    }
+
+    fn check(&mut self, block_shape: &Vec<Vec<usize>>) -> bool{
+        let mut ok: bool = true;
+        for part in block_shape{
+            if self.map[part[1]][part[0]] != 0{
+                ok = false;
+                break;
+            }
+        }
+        ok
+    }
 
     pub fn encoding(&self) {
         let mut map = self.map.clone();
