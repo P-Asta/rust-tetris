@@ -64,7 +64,6 @@ impl Tblock {
         match make_shape(0, self.pos, 0){
             Ok(ok) => {self.shape.clone() == ok}
             Err(_) => {
-                println!("err");
                 false
             }
         }

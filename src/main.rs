@@ -3,6 +3,7 @@ use std::io::{stdout, BufReader};
 use std::{thread, time};
 
 use crossterm::ExecutableCommand;
+use tetris::t_built_in::built_in;
 use tetris::t_map::Tmap;
 use tetris::t_move::Move;
 
@@ -11,13 +12,16 @@ use crossterm::event::KeyCode;
 
 use std::fs::File;
 use rodio::{Decoder, OutputStream, source::Source};
+
 /*
 TODO: 버그해결
+
+FIXME: 
 
 */
 fn main() {
     let map = std::sync::Mutex::new(Tmap::new());
-    
+    // return;
     thread::scope(|scope|{
         let main_th = scope.spawn(|| {
             loop {
@@ -25,12 +29,13 @@ fn main() {
                     let checker = map.lock();
                     match checker {
                         Ok(x) => {
-                            cls();
+                            built_in::cls();
                             x.encoding();
-                            println!("\npoint: {}", x.point);
+                            // File::open()
+                            x.print_points();
                             if x.block.is_none(){
                                 println!("GAME OVER!");
-                                break;
+                                return;
                             }
                         }
                         Err(e) => {println!("{e:?}")}
@@ -72,15 +77,16 @@ fn main() {
                     let checker = map.lock();
                     match checker {
                         Ok(x) => {
-                            cls();
+                            built_in::cls();
                             let mut map_writer = x;
                             map_writer.down_block();
                             map_writer.encoding();
-        
-                            println!("\npoint: {}", map_writer.point);
+                            
+                            map_writer.print_points();
+
                             if map_writer.block.is_none(){
                                 println!("GAME OVER!");
-                                break;
+                                return;
                             }
                         }
                         Err(e) => {println!("{e:?}")}
@@ -92,13 +98,7 @@ fn main() {
 
         let bgm_th = scope.spawn(||{
             loop{
-                let (_stream, handle) = rodio::OutputStream::try_default().unwrap();
-                let sink = rodio::Sink::try_new(&handle).unwrap();
-    
-                let file = std::fs::File::open("C:/Users/smile/OneDrive/문서/GitHub/rust-tetris/src/sounds/bgm.mp3").unwrap();
-                sink.append(rodio::Decoder::new(BufReader::new(file)).unwrap());
-    
-                sink.sleep_until_end();
+                built_in::play_sound("bgm")
             }
         });
         
@@ -109,10 +109,7 @@ fn main() {
 }
 
 
-fn cls(){
-    stdout().execute(crossterm::cursor::MoveTo(0, 0)).unwrap();
-    stdout().execute(crossterm::terminal::Clear(crossterm::terminal::ClearType::All)).unwrap();
-}
+
 
 // fn main() -> Result<()> {
 //     let color = Color::Rgb { r: 100, g: 100, b: 100 };

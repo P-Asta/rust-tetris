@@ -6,19 +6,22 @@
 // 아하
 
 use rand::{Rng, thread_rng};
+use std::fs::{File, self};
 use std::io::{stdout};
 
 use crossterm::execute;
 use crossterm::style::{Print, SetForegroundColor, SetBackgroundColor, ResetColor, Color};
 use super::t_block::Tblock;
 use super::t_move::Move;
-use super::t_built_in::built_in::make_shape;
+use super::t_built_in::built_in::{make_shape, self, cls};
+use std::thread;
 
 #[derive(Debug, Clone)]
 pub struct Tmap {
     pub map: Vec<Vec<usize>>,
     pub block: Tblock,
-    pub point: usize
+    pub point: usize,
+    pub best_point: usize
 }
 
 
@@ -60,22 +63,36 @@ impl Tmap {
         
         let mut rng = thread_rng();
         let block: Tblock = Tblock::new(rng.gen_range(1..8), None, 0);
-        // let block: Tblock = Tblock::new(1, None, 0);
+        let root = std::env::current_dir().unwrap();
+        let path = root.join("src/test.img").to_str().unwrap().replace("\\", "/");
+
+        let checker = fs::read_to_string(path).unwrap().parse::<usize>();
+        println!("{checker:?}");
+        let best_point: usize = match checker{
+            Ok(ok) => ok,
+            Err(_) => {
+                0
+            }
+        };
+
 
         map = vec![vec![0; 10]; 20];
         Self{
             map: map,
             block: block,
-            point: 0
+            point: 0,
+            best_point: best_point
         }
     }
 
     pub fn set_block(&mut self){ 
         let block = self.block.clone();
+        self.spawn_block();
         for shape in block.shape{
             self.map[shape[1]][shape[0]] = block.id;
         }
         let mut i: usize = 0;
+        let mut add = 10;
         for map in &self.map.clone(){
             let mut ok: bool = true;
             for i in map{
@@ -85,15 +102,70 @@ impl Tmap {
                 }
             }
             if ok{
+                for j in 0..10{
+                    self.map[i][j] = 0;
+                    built_in::play_sound("pop");
+                    cls();
+                    self.encoding();
+                    self.print_points();
+                    self.point += add;
+                }
+                add += 10;
+                
                 self.map.remove(i);
                 self.map.reverse();
                 self.map.push(vec![0;10]);
                 self.map.reverse();
-                i -= 1;
-                self.point += 100
+                
+                if self.point > self.best_point{
+                    self.best_point = self.point;
+                    let root = std::env::current_dir().unwrap();
+                    let path = root.join("src/test.img");
+                    let checker = fs::write(path, self.best_point.to_string());
+                    match checker {
+                        Ok(ok) => ok,
+                        Err(_) => println!("save failed")
+                    }
+                }
             }
             i += 1;
         }
+    }
+    
+    pub fn print_points(&self){
+        println!("\n");
+        let bold = Color::Rgb { r: 138, g: 70, b: 255 };
+        let org = Color::Rgb { r: 129, g: 135, b: 251 };
+        _ = execute!(
+            stdout(),
+            SetForegroundColor(Color::Black),
+            SetBackgroundColor(org),
+            Print("score     ".to_string()),
+            ResetColor
+        );
+        _ = execute!(
+            stdout(),
+            SetForegroundColor(Color::White),
+            SetBackgroundColor(bold),
+            Print(self.point.to_string()),
+            ResetColor
+        );
+
+        print!("\n");
+        _ = execute!(
+            stdout(),
+            SetForegroundColor(Color::Black),
+            SetBackgroundColor(org),
+            Print("top score ".to_string()),
+            ResetColor
+        );
+        _ = execute!(
+            stdout(),
+            SetForegroundColor(Color::White),
+            SetBackgroundColor(bold),
+            Print(self.best_point.to_string()),
+            ResetColor
+        );
     }
 
     pub fn down_block(&mut self){ 
@@ -107,13 +179,11 @@ impl Tmap {
                 }else{
                     self.block.pos.y -= 1;
                     self.set_block();
-                    self.spawn_block();
                 }
             }
             Err(_) => { 
                 self.block.pos.y -= 1;
                 self.set_block();
-                self.spawn_block();
             }
         };
     }
