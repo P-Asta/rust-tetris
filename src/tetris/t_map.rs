@@ -21,7 +21,8 @@ pub struct Tmap {
     pub map: Vec<Vec<usize>>,
     pub block: Tblock,
     pub point: usize,
-    pub best_point: usize
+    pub best_point: usize,
+    pub stop: bool
 }
 
 
@@ -81,7 +82,8 @@ impl Tmap {
             map: map,
             block: block,
             point: 0,
-            best_point: best_point
+            best_point: best_point,
+            stop: false
         }
     }
 
@@ -93,6 +95,7 @@ impl Tmap {
         }
         let mut i: usize = 0;
         let mut add = 10;
+        self.stop = true;
         for map in &self.map.clone(){
             let mut ok: bool = true;
             for i in map{
@@ -130,6 +133,7 @@ impl Tmap {
             }
             i += 1;
         }
+        self.stop = false;
     }
     
     pub fn print_points(&self){
@@ -168,7 +172,8 @@ impl Tmap {
         );
     }
 
-    pub fn down_block(&mut self){ 
+    pub fn down_block(&mut self){
+        if self.stop{return;}
         self.block.pos.y += 1;
         match make_shape(self.block.id, self.block.pos, self.block.deg) {
             Ok(ok) => { 
@@ -189,15 +194,18 @@ impl Tmap {
     }
 
     pub fn move_block(&mut self, direction: Move){
+        if self.stop{return;} 
         let mut block_clone = self.block.clone();
         block_clone.t_move(direction);
         let ok = self.check(&block_clone.shape);
         if ok{
             self.block = block_clone.clone();
-        }   
+        }
     }
 
     pub fn spin_block(&mut self){
+        if self.stop{return;}
+
         let mut block_clone = self.block.clone();
         block_clone.t_spin();
         if self.check(&block_clone.shape){

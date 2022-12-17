@@ -29,13 +29,15 @@ fn main() {
                     let checker = map.lock();
                     match checker {
                         Ok(x) => {
-                            built_in::cls();
-                            x.encoding();
-                            // File::open()
-                            x.print_points();
-                            if x.block.is_none(){
-                                println!("GAME OVER!");
-                                return;
+                            if !x.stop{
+                                built_in::cls();
+                                x.encoding();
+                                // File::open()
+                                x.print_points();
+                                if x.block.is_none(){
+                                    println!("GAME OVER!");
+                                    return;
+                                }
                             }
                         }
                         Err(e) => {println!("{e:?}")}
