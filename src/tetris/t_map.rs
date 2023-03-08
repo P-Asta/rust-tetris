@@ -1,10 +1,3 @@
-
-// 이건 생각해보니 t_block이라는 모듈이 이미 정의되어있어서 mod super::t_block으로 쓸 필요가 없었네요
-// 그냥 지워주시면 됩니다 use만써주고
-// mod는 새 모듈을 만들어주는키워든데 mod.rs에서 t_block모듈을 생성해줬으니까요
-
-// 아하
-
 use rand::{Rng, thread_rng};
 use std::fs::{File, self};
 use std::io::{stdout};
