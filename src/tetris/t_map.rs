@@ -15,7 +15,7 @@ use std::thread;
 pub struct Tmap {
     pub map: Vec<Vec<usize>>,
     pub block: Tblock,
-    blocks: Bag,
+    pub blocks: Bag,
     pub point: usize,
     pub best_point: usize,
     pub stop: bool

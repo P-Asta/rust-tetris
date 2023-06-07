@@ -47,11 +47,15 @@ impl Bag{
         
         (before, after)
     }
-    pub fn hold(&mut self) -> usize{
+    pub fn hold(&mut self, block: usize) -> usize{
         if self.hold == 0{
-            self.hold = self.next().0
+            self.hold = self.next().0;
+            self.hold
+        }else{
+            let a = self.hold.clone();
+            self.hold = block;
+            a
         }
-        self.hold
     }
 }
 

@@ -3,6 +3,7 @@ use std::io::{stdout, BufReader};
 use std::{thread, time};
 
 use crossterm::ExecutableCommand;
+use tetris::t_block::Tblock;
 use tetris::t_built_in::built_in;
 use tetris::t_map::Tmap;
 use tetris::t_move::Move;
@@ -52,6 +53,15 @@ fn main() {
                                 KeyCode::Up => {
                                     map_writer.spin_block();
                                 },
+                                KeyCode::Char('z') => {
+                                    map_writer.spin_block();
+                                    map_writer.spin_block();
+                                    map_writer.spin_block();
+                                },
+                                KeyCode::Char('a') => {
+                                    map_writer.spin_block();
+                                    map_writer.spin_block();
+                                },
                                 KeyCode::Down => {
                                     map_writer.down_block();
                                 },
@@ -62,6 +72,11 @@ fn main() {
             
                                 KeyCode::Right => {
                                     map_writer.move_block(Move::Right);
+                                },
+
+                                KeyCode::Char('c') => {
+                                    let id = map_writer.block.id;
+                                    map_writer.block = Tblock::new(map_writer.blocks.hold(id), None, 0);
                                 },
             
                                 _code => { }
