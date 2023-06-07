@@ -24,6 +24,18 @@ impl Tblock {
             deg: deg
         }
     }
+    pub fn chang_en(id: usize) -> &'static str{
+        match id{
+            1 => "I",
+            2 => "T",
+            3 => "O",
+            4 => "J",
+            5 => "L",
+            6 => "Z",
+            7 => "S",
+            _ => "?"
+        }
+    }
 
     pub fn t_move(&mut self, direction: Move){
         match direction{

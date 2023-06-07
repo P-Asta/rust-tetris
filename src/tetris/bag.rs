@@ -1,26 +1,33 @@
 use rand::{thread_rng, Rng};
 
+use crate::tetris::t_block::Tblock;
+
 #[derive(Clone)]
 pub struct Bag{
-    bag: Vec<Vec<usize>>
+    bag: Vec<Vec<usize>>,
+    hold: usize
 }
 
 impl Bag{
     pub fn new() -> Self{
         Self {
-            bag: vec![Self::spawn_7bag(), Self::spawn_7bag()]
+            bag: vec![Self::spawn_7bag(), Self::spawn_7bag()],
+            hold: 0
         }
     }
 
     fn spawn_7bag() -> Vec<usize>{
         let mut blocks: Vec<usize> = vec![];
+        let mut block = 0;
+        
         while blocks.len() != 7{
             let mut rng = thread_rng();
-            let block = rng.gen_range(1..8);
+            block = rng.gen_range(1..8);
             if !blocks.contains(&block){
                 blocks.push(block)
             }
         }
+        // blocks.push(block);
         blocks
     }
 
@@ -40,11 +47,33 @@ impl Bag{
         
         (before, after)
     }
+    pub fn hold(&mut self) -> usize{
+        if self.hold == 0{
+            self.hold = self.next().0
+        }
+        self.hold
+    }
 }
 
 
 impl std::fmt::Debug for Bag{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}| {}", self.bag, self.bag[0].len())
+        let mut a = 0;
+        let mut bags = String::new();
+        let mut idx = 0;
+        for i in &self.bag{
+            for j in 0..i.len(){
+                bags.push_str(
+                    Tblock::chang_en(self.bag[idx][j])
+                );
+                bags.push_str(" ");
+                a += 1;
+                if a == 5{ break }
+            }
+            if a == 5{ break };
+            idx += 1;
+        }
+        
+        write!(f, "{} | {} {:?}", Tblock::chang_en(self.hold), bags, self.bag)
     }
 }

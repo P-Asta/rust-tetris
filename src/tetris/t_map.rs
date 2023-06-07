@@ -57,7 +57,7 @@ impl Tmap {
     pub fn new() -> Self {
         let mut map: Vec<Vec<usize>> = vec![];
         let mut blocks = Bag::new();
-        let block: Tblock = Tblock::new(blocks.next().1, None, 0);
+        let block: Tblock = Tblock::new(blocks.next().0, None, 0);
         let root = std::env::current_dir().unwrap();
         let path = root.join("src/test.img").to_str().unwrap().replace("\\", "/");
 
@@ -98,14 +98,12 @@ impl Tmap {
                 }
             }
             if ok{
-                for j in 0..10{
-                    self.map[i][j] = 0;
-                    built_in::play_sound("pop");
-                    cls();
-                    self.encoding();
-                    self.print_points();
-                    self.point += add;
-                }
+                self.map[i] = vec![0; 10];
+                built_in::play_sound("pop");
+                self.point += add;
+                self.print_points();
+                cls();
+                self.encoding();
                 add += 10;
                 
                 self.map.remove(i);
@@ -207,7 +205,7 @@ impl Tmap {
     }
 
     fn spawn_block(&mut self){
-        let block = Tblock::new(self.blocks.next().1, None, 0);
+        let block = Tblock::new(self.blocks.next().0, None, 0);
         for part in &block.shape{
             if self.map[part[1]][part[0]] != 0{
                 self.block = Tblock::new(0, None, 0);
