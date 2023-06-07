@@ -49,6 +49,7 @@ fn main() {
                 match read().unwrap() {
                     Key(key) => {
                         {
+                            disable_raw_mode().unwrap();
                             let mut map_writer = map.lock().unwrap();
                             match key.code{
                                 KeyCode::Up => {
@@ -68,6 +69,7 @@ fn main() {
             
                                 _code => {}
                             }
+                            enable_raw_mode().unwrap();
                         }
                     }
                     _ => { }
@@ -77,7 +79,7 @@ fn main() {
 
         let down_th = scope.spawn(|| {
             loop {
-                disable_raw_mode();
+                disable_raw_mode().unwrap();
                 {
                     let checker = map.lock();
                     match checker {
@@ -97,7 +99,7 @@ fn main() {
                         Err(e) => {println!("{e:?}")}
                     }
                 }
-                enable_raw_mode();
+                enable_raw_mode().unwrap();
                 thread::sleep(time::Duration::from_millis(1500))
             }
         });
