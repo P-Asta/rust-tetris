@@ -9,6 +9,7 @@ use tetris::t_move::Move;
 
 use crossterm::event::{read, Event::Key};
 use crossterm::event::KeyCode;
+use crossterm::terminal::{enable_raw_mode, disable_raw_mode};
 
 use std::fs::File;
 use rodio::{Decoder, OutputStream, source::Source};
@@ -26,6 +27,7 @@ fn main() {
         let main_th = scope.spawn(|| {
             loop {
                 {
+                    disable_raw_mode().unwrap();
                     let checker = map.lock();
                     match checker {
                         Ok(x) => {
@@ -42,8 +44,8 @@ fn main() {
                         }
                         Err(e) => {println!("{e:?}")}
                     }
+                    enable_raw_mode().unwrap();
                 }
-                
                 match read().unwrap() {
                     Key(key) => {
                         {
@@ -64,7 +66,7 @@ fn main() {
                                     map_writer.move_block(Move::Right);
                                 },
             
-                                _code => { }
+                                _code => {}
                             }
                         }
                     }
@@ -75,6 +77,7 @@ fn main() {
 
         let down_th = scope.spawn(|| {
             loop {
+                disable_raw_mode();
                 {
                     let checker = map.lock();
                     match checker {
@@ -94,6 +97,7 @@ fn main() {
                         Err(e) => {println!("{e:?}")}
                     }
                 }
+                enable_raw_mode();
                 thread::sleep(time::Duration::from_millis(1500))
             }
         });
