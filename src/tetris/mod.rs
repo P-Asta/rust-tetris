@@ -3,3 +3,4 @@ pub mod t_block;
 pub mod t_pos;
 pub mod t_move;
 pub mod t_built_in;
+pub mod bag;

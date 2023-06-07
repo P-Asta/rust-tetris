@@ -3,6 +3,7 @@
 pub mod built_in{
     use std::{io::{stdout, BufReader}, thread, time};
     use crossterm::ExecutableCommand;
+    use rand::{thread_rng, Rng};
 
     // 여기는 crate::tetris::t_built_in::built_in
     use super::super::t_pos::Pos;

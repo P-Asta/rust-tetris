@@ -4,6 +4,8 @@ use std::io::{stdout};
 
 use crossterm::execute;
 use crossterm::style::{Print, SetForegroundColor, SetBackgroundColor, ResetColor, Color};
+use crate::tetris::bag::Bag;
+
 use super::t_block::Tblock;
 use super::t_move::Move;
 use super::t_built_in::built_in::{make_shape, self, cls};
@@ -13,6 +15,7 @@ use std::thread;
 pub struct Tmap {
     pub map: Vec<Vec<usize>>,
     pub block: Tblock,
+    blocks: Bag,
     pub point: usize,
     pub best_point: usize,
     pub stop: bool
@@ -53,10 +56,8 @@ impl Tmap {
     #[allow(unused_assignments)]
     pub fn new() -> Self {
         let mut map: Vec<Vec<usize>> = vec![];
-        
-        
-        let mut rng = thread_rng();
-        let block: Tblock = Tblock::new(rng.gen_range(1..8), None, 0);
+        let mut blocks = Bag::new();
+        let block: Tblock = Tblock::new(blocks.next().1, None, 0);
         let root = std::env::current_dir().unwrap();
         let path = root.join("src/test.img").to_str().unwrap().replace("\\", "/");
 
@@ -68,12 +69,11 @@ impl Tmap {
                 0
             }
         };
-
-
         map = vec![vec![0; 10]; 20];
         Self{
             map: map,
             block: block,
+            blocks: blocks,
             point: 0,
             best_point: best_point,
             stop: false
@@ -207,8 +207,7 @@ impl Tmap {
     }
 
     fn spawn_block(&mut self){
-        let mut rng = thread_rng();
-        let block = Tblock::new(rng.gen_range(1..8), None, 0);
+        let block = Tblock::new(self.blocks.next().1, None, 0);
         for part in &block.shape{
             if self.map[part[1]][part[0]] != 0{
                 self.block = Tblock::new(0, None, 0);
@@ -298,5 +297,6 @@ impl Tmap {
                 ResetColor
             );
         }
+        println!("\n{:?}", self.blocks)
     }
 }
