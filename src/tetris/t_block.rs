@@ -36,7 +36,7 @@ impl Tblock {
             _ => "?"
         }
     }
-
+    
     pub fn t_move(&mut self, direction: Move){
         match direction{
             Move::Left => {
