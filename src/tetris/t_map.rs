@@ -98,29 +98,28 @@ impl Tmap {
                 }
             }
             if ok{
-                self.map[i] = vec![0; 10];
-                built_in::play_sound("pop");
-                self.point += add;
-                self.print_points();
-                cls();
-                self.encoding();
-                add += 10;
-                
                 self.map.remove(i);
                 self.map.reverse();
                 self.map.push(vec![0;10]);
                 self.map.reverse();
+                self.point += add;
+                self.print_points();
+                cls();
+                // self.encoding();
+                // built_in::play_sound("pop");
+                add += 10;
                 
-                if self.point > self.best_point{
-                    self.best_point = self.point;
-                    let root = std::env::current_dir().unwrap();
-                    let path = root.join("src/test.img");
-                    let checker = fs::write(path, self.best_point.to_string());
-                    match checker {
-                        Ok(ok) => ok,
-                        Err(_) => println!("save failed")
-                    }
-                }
+                
+                // if self.point > self.best_point{
+                //     self.best_point = self.point;
+                //     let root = std::env::current_dir().unwrap();
+                //     let path = root.join("src/test.img");
+                //     let checker = fs::write(path, self.best_point.to_string());
+                //     match checker {
+                //         Ok(ok) => ok,
+                //         Err(_) => println!("save failed")
+                //     }
+                // }
             }
             i += 1;
         }
