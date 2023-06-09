@@ -228,6 +228,27 @@ impl Tmap {
         }
     }
 
+
+    pub fn unspin_block(&mut self){
+        if self.stop{return;}
+
+        let mut block_clone = self.block.clone();
+        block_clone.t_unspin();
+        if self.check(&block_clone.shape){
+            self.block = block_clone.clone();
+        }
+    }
+
+    pub fn doublespin_block(&mut self){
+        if self.stop{return;}
+
+        let mut block_clone = self.block.clone();
+        block_clone.t_doublespin();
+        if self.check(&block_clone.shape){
+            self.block = block_clone.clone();
+        }
+    }
+
     fn spawn_block(&mut self){
         let block = Tblock::new(self.blocks.next().0, None, 0);
         for part in &block.shape{

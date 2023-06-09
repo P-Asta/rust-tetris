@@ -66,11 +66,33 @@ impl Tblock {
     }
 
     pub fn t_spin(&mut self){
-        if self.deg + 1 >= 4{
-            self.deg = 0;
-        }else{
-            self.deg += 1
+        self.deg = (self.deg+1)%4;
+        match make_shape(self.id, self.pos, self.deg) {
+            Ok(ok) => { self.shape = ok }
+            Err(_) => {
+                if self.deg == 0{
+                    self.deg = 3
+                }else{
+                    self.deg -= 1
+                }
+            }
         }
+    }
+    pub fn t_unspin(&mut self){
+        self.deg = (self.deg+3)%4;
+        match make_shape(self.id, self.pos, self.deg) {
+            Ok(ok) => { self.shape = ok }
+            Err(_) => {
+                if self.deg == 0{
+                    self.deg = 3
+                }else{
+                    self.deg -= 1
+                }
+            }
+        }
+    }
+    pub fn t_doublespin(&mut self){
+        self.deg = (self.deg+2)%4;
         match make_shape(self.id, self.pos, self.deg) {
             Ok(ok) => { self.shape = ok }
             Err(_) => {

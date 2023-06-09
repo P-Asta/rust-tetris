@@ -67,13 +67,10 @@ fn main() {
 
 
                                 KeyCode::Char('z') => {
-                                    map_writer.spin_block();
-                                    map_writer.spin_block();
-                                    map_writer.spin_block();
+                                    map_writer.unspin_block();
                                 },
                                 KeyCode::Char('a') => {
-                                    map_writer.spin_block();
-                                    map_writer.spin_block();
+                                    map_writer.doublespin_block();
                                 },
                                 KeyCode::Char('c') => {
                                     let id = map_writer.block.id;
