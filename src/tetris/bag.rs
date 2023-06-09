@@ -79,6 +79,6 @@ impl std::fmt::Debug for Bag{
             idx += 1;
         }
         
-        write!(f, "{} | {} {:?}", Tblock::chang_en(self.hold), bags, self.bag)
+        write!(f, "{} | {}", Tblock::chang_en(self.hold), bags)
     }
 }
