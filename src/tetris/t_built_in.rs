@@ -109,16 +109,16 @@ pub mod built_in{
             7 => {
                 vec![
                     vec![
-                        vec![0 , 2], vec![1 , 1], vec![1 , 2], vec![2 , 1]
-                    ],
-                    vec![
-                        vec![0 , 0], vec![1 , 1], vec![0 , 1], vec![1 , 2]
-                    ],
-                    vec![
                         vec![0 , 1], vec![1 , 1], vec![1 , 0], vec![2 , 0]
                     ],
                     vec![
                         vec![1 , 0], vec![1 , 1], vec![2 , 1], vec![2 , 2]
+                    ],
+                    vec![
+                        vec![0 , 2], vec![1 , 1], vec![1 , 2], vec![2 , 1]
+                    ],
+                    vec![
+                        vec![0 , 0], vec![1 , 1], vec![0 , 1], vec![1 , 2]
                     ]
                 ]
             }
