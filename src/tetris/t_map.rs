@@ -220,8 +220,8 @@ impl Tmap {
 
     pub fn spin_block(&mut self){
         if self.stop{return;}
-
-        let mut block_clone = self.block.clone();
+        let round = 10;
+        let mut block_clone = Tblock::new(self.block.id, Some(self.block.pos), self.block.deg);
         block_clone.t_spin();
         if self.check(&block_clone.shape){
             self.block = block_clone.clone();

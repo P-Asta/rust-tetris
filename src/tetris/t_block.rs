@@ -66,14 +66,14 @@ impl Tblock {
     }
 
     pub fn t_spin(&mut self){
+        let radius= 10;
         self.deg = (self.deg+1)%4;
         match make_shape(self.id, self.pos, self.deg) {
-            Ok(ok) => { self.shape = ok }
+            Ok(ok) => { self.shape = ok; println!("yep") }
             Err(_) => {
+                println!("no");
                 if self.deg == 0{
-                    self.deg = 3
-                }else{
-                    self.deg -= 1
+                    self.deg = 3;
                 }
             }
         }
