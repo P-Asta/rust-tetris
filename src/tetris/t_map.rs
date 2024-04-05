@@ -183,31 +183,6 @@ impl Tmap {
         };
     }
 
-    pub fn hard_drop(&mut self){
-        if self.stop{return;}
-        loop{
-            self.block.pos.y += 1;
-            match make_shape(self.block.id, self.block.pos, self.block.deg) {
-                Ok(ok) => { 
-                    let test_block = ok;
-                    let ok2 = self.check(&test_block);
-                    if ok2{
-                        self.block.shape = test_block.clone();
-                    }else{
-                        self.block.pos.y -= 1;
-                        self.set_block();
-                        return
-                    }
-                }
-                Err(_) => { 
-                    self.block.pos.y -= 1;
-                    self.set_block();
-                    return
-                }
-            };
-        }
-    }
-
     pub fn move_block(&mut self, direction: Move){
         if self.stop{return;} 
         let mut block_clone = self.block.clone();

@@ -56,6 +56,15 @@ fn main() {
                                 KeyCode::Up => {
                                     map_writer.spin_block();
                                 },
+                                KeyCode::Char('z') => {
+                                    map_writer.spin_block();
+                                    map_writer.spin_block();
+                                    map_writer.spin_block();
+                                },
+                                KeyCode::Char('a') => {
+                                    map_writer.spin_block();
+                                    map_writer.spin_block();
+                                },
                                 KeyCode::Down => {
                                     map_writer.down_block();
                                 },
@@ -68,6 +77,7 @@ fn main() {
                                     map_writer.move_block(Move::Right);
                                 },
 
+<<<<<<< HEAD
 
                                 KeyCode::Char('z') => {
                                     map_writer.unspin_block();
@@ -75,15 +85,14 @@ fn main() {
                                 KeyCode::Char('a') => {
                                     map_writer.doublespin_block();
                                 },
+=======
+>>>>>>> parent of 29cfbc1 (add hard drop)
                                 KeyCode::Char('c') => {
                                     let id = map_writer.block.id;
                                     map_writer.block = Tblock::new(map_writer.blocks.hold(id), None, 0);
                                 },
-                                KeyCode::Char(' ') => {
-                                    map_writer.hard_drop();
-                                },
             
-                                _code => {}
+                                _code => { }
                             }
                             enable_raw_mode().unwrap();
                         }
