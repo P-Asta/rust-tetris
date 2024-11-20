@@ -8,8 +8,35 @@ pub mod built_in {
         thread, time,
     };
 
-    // 여기는 crate::tetris::t_built_in::built_in
     use super::super::t_pos::Pos;
+    /*
+    # 1
+    ⬜⬜⬜⬜
+    
+    # 2
+    ⬛🟪
+    🟪🟪🟪
+    
+    # 3
+    🟨🟨
+    🟨🟨
+    
+    # 4
+    🟦
+    🟦🟦🟦
+    
+    # 5
+    ⬛⬛🟧
+    🟧🟧🟧
+    
+    # 6
+    🟥🟥
+    ⬛🟥🟥
+    
+    # 7
+    ⬛🟩🟩
+    🟩🟩
+    */
     #[allow(unused_assignments)]
     pub fn make_shape(id: usize, pos: Pos, deg: usize) -> Result<Vec<Vec<usize>>, ()> {
         let mut block: Vec<Vec<Vec<usize>>> = match id {
